@@ -116,6 +116,7 @@ public class DataStreamsGUIRunner extends JFrame
         String rec= "";
 
         displayOGTextTA.setText("");
+        displayFilteredTextTA.setText("");
 
         try
         {
