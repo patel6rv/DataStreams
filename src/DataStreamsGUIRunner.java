@@ -6,11 +6,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 
@@ -127,27 +125,18 @@ public class DataStreamsGUIRunner extends JFrame
             if(chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
             {
                 selectedFile = chooser.getSelectedFile();
-                Path file = selectedFile.toPath();
 
-                InputStream in = new BufferedInputStream(Files.newInputStream(file, CREATE));
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                while(reader.ready())
-                {
-                        rec = reader.readLine();
-                        list.add(rec);
-                        displayOGTextTA.append(rec + "\n");
-                }
-                reader.close();
-                System.out.println(list);
+                Stream lines = Files.lines(Paths.get(selectedFile.toURI()));
+                list = lines.toList();
+                list.forEach(item -> displayOGTextTA.append(item.concat("\n")));
             }
         }
-        catch(FileNotFoundException e)
+        catch (FileNotFoundException e)
         {
             JOptionPane.showMessageDialog(null, "File not found");
             e.printStackTrace();
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             e.printStackTrace();
         }
@@ -161,10 +150,11 @@ public class DataStreamsGUIRunner extends JFrame
             JOptionPane.showMessageDialog(null, "You have not yet entered any text. \nPlease enter text before filtering");
         }
         else {
-            String hold = JOptionPane.showInputDialog("Please enter a filter");
+            String hold = JOptionPane.showInputDialog("Please enter a filter")
+                    .toLowerCase();
 
             List<String> filteredList = list.stream()
-                    .filter(word -> word.contains(hold))
+                    .filter(word -> word.toLowerCase().contains(hold))
                     .collect(Collectors.toList());
 
             String display = "";
